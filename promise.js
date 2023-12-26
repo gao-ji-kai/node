@@ -1,5 +1,4 @@
-const { on } = require("events");
-const { type } = require("os");
+
 
 console.log('promise.js');
 const PENDING = 'PENDING'
@@ -58,6 +57,13 @@ class Promise {
         this.onResolvedCallbacks = [];
         this.onRejectedCallbacks = [];
         const resolve = (value) => {
+            // 为了满足ECMAScript 规范中的功能  所以要判断一下
+
+            if (value instanceof Promise) {
+                // 递归解析
+                return value.then(resolve, reject)
+            }
+
             // 只有pending状态才能改变状态
             if (this.status === PENDING) {
                 this.status = FULFILLED;
@@ -80,10 +86,13 @@ class Promise {
         }
 
     }
+    catch(errFn) {
+        return this.then(null, errFn)// 针对失败做处理
+    }
     then(onFulfilled, onRejected) {
         // then方法中 如果没有传递参数 那么可以透传到下一个then中
         onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : data => data;
-        
+
         onRejected = typeof onRejected === 'function' ? onRejected : err => { throw err }
         let promise2 = new Promise((resolve, reject) => {
             if (this.status === FULFILLED) {
@@ -152,7 +161,7 @@ class Promise {
 
 }
 
-Promise.deferred = function () { 
+Promise.deferred = function () {
     let dfd = {}
     dfd.promise = new Promise((resolve, reject) => {
         dfd.resolve = resolve
@@ -160,6 +169,37 @@ Promise.deferred = function () {
 
     })
     return dfd
+}
+
+Promise.resolve = function (value) {
+    return new Promise((resolve, reject) => {
+        resolve(value)
+    })
+}
+
+Promise.reject = function (reason) {
+    return new Promise((resolve, reject) => {
+        reject(reason)
+    })
+}
+
+// 实现一个Promise.all方法
+Promise.all = function (promises) {
+    return new Promise((resolve, reject) => {
+        let arr = [];
+        let i = 0;
+        function processData(index, data) {
+            arr[index] = data;
+            if (++i === promises.length) {
+                resolve(arr);
+            }
+        }
+        for (let i = 0; i < promises.length; i++) {
+            promises[i].then(data => {
+                processData(i, data);
+            }, reject)
+        }
+    })
 }
 
 // npm i promises-aplus-tests -g 
