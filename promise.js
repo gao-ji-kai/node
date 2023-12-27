@@ -58,7 +58,6 @@ class Promise {
         this.onRejectedCallbacks = [];
         const resolve = (value) => {
             // 为了满足ECMAScript 规范中的功能  所以要判断一下
-
             if (value instanceof Promise) {
                 // 递归解析
                 return value.then(resolve, reject)
@@ -183,7 +182,7 @@ Promise.reject = function (reason) {
     })
 }
 
-// 实现一个Promise.all方法
+// 实现一个Promise.all方法 都成功才成功 有一个失败就失败
 Promise.all = function (promises) {
     return new Promise((resolve, reject) => {
         let arr = [];
@@ -201,6 +200,17 @@ Promise.all = function (promises) {
         }
     })
 }
+
+
+// 实现一个Promise.race方法 以最快的为准 通常用它来终断成功的结果
+Promise.race = function (promises) {
+    return new Promise((resolve, reject) => {
+        for (let i = 0; i < promises.length; i++) {
+            promises[i].then(resolve, reject)
+        }
+    })
+}
+
 
 // npm i promises-aplus-tests -g 
 
