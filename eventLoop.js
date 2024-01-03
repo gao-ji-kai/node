@@ -37,6 +37,17 @@
 
         requestAnimationFrame:浏览器在下一次重绘之前执行回调函数 
         (requestAnimationFrame UI渲染  requestIdleCallback:) 网上说是宏任务  (和浏览器渲染相关，称为钩子)
+
+
+
+        除了微任务  都是宏任务
+           微任务:queueMicrotask(只在浏览器中有)  Promise.then  process.nextTick(只在node中有)  MutationObserver(只在浏览器中有)
+
+        执行流程
+            浏览器会提供一个单独的宏任务队列  默认情况下 所有主线程执行的任务就是一个宏任务
+            script(脚本执行)  执行这个脚本之后 会产生宏任务和微任务 微任务会放到微任务队列中  宏任务会放到宏任务队列中 
+               等待脚本执行完毕  会清空所有的微任务  在拿出下一个宏任务 继续执行
+               每次执行一个宏任务 ->(清空本次产生的所有微任务) -> 可能要渲染 16.6的延迟  -> 拿出下一个宏任务执行
  */
 
 
