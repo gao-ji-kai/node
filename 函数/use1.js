@@ -13,7 +13,7 @@
     9.executor是是立即执行的
  */
 
-const Promise = require('./promise');
+const Promise = require('../Promise/promise');
 const promise = new Promise((resolve, reject) => {
     // resolve('success');
     // throw new Error('error');

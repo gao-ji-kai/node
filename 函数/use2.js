@@ -1,6 +1,6 @@
 const fs = require('fs');// file system 最好使用绝对路径
 const path = require('path');// 路径模块
-const Promise = require('./promise.js');
+const Promise = require('../Promise/promise.js');
 
 // fs.readFile(path.resolve(__dirname, 'name.txt'), 'utf8', function (err, data) {
 //     if (err) return console.log(err);
