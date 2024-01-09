@@ -38,5 +38,44 @@ b.fn() //b中使用a
             3.在可执行文件中写入#!/usr/bin/env node
             4.在命令行中执行npm link 就可以将当前包链接到全局
 
+            需要在 入口中 添加 #!/usr/bin/env node 运行环境
 
 */
+
+/**
+    --save  开发 上线都需要用到的依赖 dependencies
+    --save-dev 开发时需要用到的依赖 devDependencies 
+ 
+    npm i xxx --save  开发 上线都需要用到的依赖
+    npm i xxx --save-dev 开发时需要用到的依赖
+
+    package-lock.json 锁定版本号 保证安装的版本号一致 会随着pages.json中版本号的变化而变化
+
+    项目依赖 dependencies
+    开发依赖 devDependencies
+    同等依赖 peerDependencies 要求安装 但是不安装不报错
+    可选依赖 optionalDependencies  
+    打包依赖 bundleDependencies 是个数组 npm pack 打包的时候会将这个数组中的依赖一起打包
+
+ */
+
+/*
+    版本管理 
+        major.minor.patch 主版本.次版本.补丁版本
+        semever 语义化版本号 
+
+        预发版本 做测试的
+            1.0.0-alpha.1
+            1.0.0-beta.1 公开测试
+
+    版本号标识符
+     ^2.2.0 只能是2版本  不能是1版本开头或2开头
+     ~1.1  限制了  只能是1.1开头的版本  
+
+    scripts  设置脚本 可以在命令行中执行 npm run xxx 来执行
+
+    npx 命令 是npm5.2版本之后自带的 可以执行node_modules/.bin目录下的命令(命令不存在会先安装再执行)
+
+    npm publish 发布包 需要切换源到npm官方源 
+*/
+
