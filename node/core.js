@@ -48,7 +48,7 @@
             
             })
 
-            我们可以使用nextTick来实现一个异步方法的同步调用 
+        node中的事件环
             timer 定时器
             pending callbacks  上一轮没有执行完的回调
             idle, prepare  内部使用
@@ -56,16 +56,16 @@
             check 执行setImmediate的回调
             close callbacks socket.close
 
+
     当主栈执行完毕后 会按照顺序依次执行 timer(setTimeout) ->poll(fs方法) ->check(setImmediate)
     当代码执行完毕后 会从timer ->poll  检测poll里面是否执行完毕了 如果执行完毕了 就会执行check里面的方法  如果没有就继续等待
 
     node中只是将宏任务进行了划分 划分到了不同的宏任务队列
     微任务也是在每个宏任务执行完毕后 才清空
 
-    process.nextTick 并不是微任务  每个宏任务执行完毕后 会执行nextTick  
+    process.nextTick 并不是微任务 但是他的优先级比微任务高 (宏任务 -> nextTick -> 清空微任务 -> 宏任务)  
 
-
-
+    
 
 */
 
@@ -75,4 +75,27 @@
 // setTimeout
 
 // console.dir(global, { showHidden: true });
-console.dir(Object.keys(process, { showHidden: true }));
+// console.dir(Object.keys(process, { showHidden: true }));
+
+// setTimeout setImmediate 使用时 (主模块中不知道谁快谁慢)
+setImmediate(() => {
+    console.log('setImmediate');
+})
+
+
+setTimeout(() => {
+    console.log('setTimeout');
+}, 0)
+
+const fs = require('fs');
+// 先poll后check
+fs.readFile('./package.json', 'utf8', () => { //poll阶段
+    setTimeout(() => {
+        console.log('setTimeout');
+    }, 0)
+    setImmediate(() => {
+        console.log('setImmediate');
+    })
+})
+
+// global.Buffer  二进制数据(展示内存)
