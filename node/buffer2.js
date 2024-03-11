@@ -78,6 +78,8 @@ console.log(Buffer.concat([buffer1, buffer2]).toString());//<Buffer e4 bd a0 e5 
       buffer.fill()  填充buffer
       Buffer.isBuffer()  判断是否是buffer  在node中处理数据 有字符串和buffer共存的情况 为了保证不出错 一般都转成buffer
         表单传输数据 enctype="multipart/form-data" 上传文件的时候 会将文件转成buffer
+      buffer.split()  拆分buffer
+      buffer.indexOf()  查找buffer中是否包含某个buffer
         
         
  */
@@ -121,3 +123,10 @@ fs.readFile(path.resolve(__dirname, 'note.md'), (err, data) => {
        答：因为slice是浅拷贝 截取的是内存空间 [0xfff,1,2,3] 所以修改newArr中的第一项 会影响原来的arr
    
  */
+
+
+
+// 文件读写   当文件很大的时候 会将文件分成多个buffer进行读取
+
+// 发布订阅模块  mitt eventBus  subscribe $subscribe  on emit $emit  off $off
+
