@@ -52,43 +52,65 @@ const path = require('path')
 
  */
 const buf = Buffer.alloc(3);
-fs.open(path.resolve(__dirname, 'test.md'), 'r', (err, fd) => {
-    // fd 文件描述符 linux 中的一个标识符 number类型
-    /*
-        fs.read(fd, buffer, offset, length, position, callback)
-            fd:读取的文件
-            buffer:读取的数据存放的位置
-            offset:buffer的偏移量 也就是从buffer的哪个位置开始写入数据
-            length:读取的长度
-            position:读取的位置
-            callback(err, bytesRead, buffer)
-            bytesRead:读到的个数
-     */
-    // 将这个文件中的数据读取到buffer中 从buffer的第0个开始写入 写入三个 读取文件的位置是0
+function copy(source, target, cb) {
+    fs.open(source, 'r', (err, fd) => {
+        if (err) return cb(err)
+        // fd 文件描述符 linux 中的一个标识符 number类型
+        /*
+            fs.read(fd, buffer, offset, length, position, callback)
+                fd:读取的文件
+                buffer:读取的数据存放的位置
+                offset:buffer的偏移量 也就是从buffer的哪个位置开始写入数据
+                length:读取的长度
+                position:读取的位置
+                callback(err, bytesRead, buffer)
+                bytesRead:读到的个数
+         */
+        // 将这个文件中的数据读取到buffer中 从buffer的第0个开始写入 写入三个 读取文件的位置是0
 
-    fs.open(path.resolve(__dirname, 'copy.md'), 'w', (err, wfd) => {
-        let readPosition = 0;
-        let writePosition = 0;
-        function next() {
-            fs.read(fd, buf, 0, 3, readPosition, (err, bytesRead, buffer) => {
-                if (bytesRead === 0) {
-                    return close()
-                } else {
-                    // bytesRead: 读取的个数 
-                    console.log(buf);//打开文件后 可以自己决定读取文件的位置
-                    readPosition += bytesRead
-                    // 写入操作
-                    fs.write(wfd, buf, 0, bytesRead, writePosition, (err, bytesWritten, buffer) => {
-                        writePosition += bytesWritten
-                        console.log('写入成功');
-                        next()
-                    })
+        fs.open(target, 'w', (err, wfd) => {
+            let readPosition = 0;
+            let writePosition = 0;
+
+            function close() {
+                let i = 0;
+                function done() {
+                    if (++i === 2) {
+                        return cb()
+                    }
                 }
-            })
-        }
-        next()
+                fs.close(fd, done);
+                fs.close(wfd, done);
+            }
+            function next() {
+                fs.read(fd, buf, 0, 3, readPosition, (err, bytesRead, buffer) => {
+                    if (err) return cb(err)
+                    if (bytesRead === 0) {
+                        return close()
+                    } else {
+                        // bytesRead: 读取的个数 
+                        console.log(buf);//打开文件后 可以自己决定读取文件的位置
+                        readPosition += bytesRead
+                        // 写入操作
+                        fs.write(wfd, buf, 0, bytesRead, writePosition, (err, bytesWritten, buffer) => {
+                            if (err) return cb(err)
+                            writePosition += bytesWritten
+                            console.log('写入成功');
+                            next()
+                        })
+                    }
+                })
+            }
+            next()
+        })
     })
+}
+copy(path.resolve(__dirname, 'test.md'), path.resolve(__dirname, 'copy.md'), () => {
+    console.log('拷贝成功');
 })
 
+// node中的流 可以控制速度 、可决定是否继续读取或写入  gulp
+// gulp ->转化成 css ->前缀处理 ->压缩 ->合并 ->输出 (控制速率 防止淹没可用内存)
 
+// 文件流 fs模块 
 
