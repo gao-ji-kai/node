@@ -1,6 +1,7 @@
 // 可读流  基于文件系统 
 const fs = require('fs');
 const path = require('path');
+const ReadStream = require('./stream');
 
 
 /*
@@ -9,7 +10,8 @@ const path = require('path');
 
  */
 
-const rs = fs.createReadStream(path.resolve(__dirname, 'test.md'), {
+// const rs = fs.createReadStream(path.resolve(__dirname, 'test.md'), {
+const rs = new ReadStream(path.resolve(__dirname, 'test.md'), {
     // fs.open(this.emit('open'))  fs.read(this.emit('data'))
     flags: 'r',// 读取文件
     encoding: null, // 默认是buffer  标识读取的编码格式
@@ -24,14 +26,17 @@ const rs = fs.createReadStream(path.resolve(__dirname, 'test.md'), {
 rs.on('open', function (fd) {
     console.log(fd);
 });// 打开文件
-
+const arr = []
 rs.on('data', function (chunk) {
+    arr.push(chunk)
     console.log(chunk);
+
     rs.pause();//暂停读取操作  可能做其他操作
 
 })//可以监听data事件 会让非流动模式变为流动模式
 rs.on('end', function () {
     console.log('end');
+    console.log(Buffer.concat(arr).toString());
 })//监听end事件 读取完毕后会触发end事件
 rs.on('close', function () {
     console.log('close');
