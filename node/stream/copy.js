@@ -28,3 +28,13 @@ ws.on('drain', () => {
 ws.on('close', () => {
     console.log('关闭');
 })
+
+/*
+  fs.readFile 不能操作大文件
+  大文件采用流的方式 文件流
+  文件的可读流 on('data') on('end')
+  文件的可写流 write end
+
+ 
+ 
+ */

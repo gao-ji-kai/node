@@ -1,9 +1,11 @@
 const fs = require('fs');
 const path = require('path');
+const WriteStream = require('./wStream');
 
 
 
-const ws = fs.createWriteStream(path.resolve(__dirname, 'copy.md'), {
+// const ws = fs.createWriteStream(path.resolve(__dirname, 'copy.md'), {
+    const ws=new WriteStream(path.resolve(__dirname, 'copy.md'), {
     flags: 'w',//标识位  写w
     encoding: null, // 默认是buffer  标识读取的编码格式
     mode: 0o666, // 权限位
@@ -40,6 +42,10 @@ function write() {
     }
 }
 write()
+ws.on('open', (fd) => {
+    console.log(fd);
+
+ })
 // 当 当前的写入操作个数达到了highWaterMark时 会触发drain事件
 ws.on('drain', () => {
     console.log('干了');
