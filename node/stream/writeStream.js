@@ -39,6 +39,9 @@ function write() {
         if (flag) {
             write()
         }
+    } else {
+        ws.end('结束写入')
+    
     }
 }
 write()

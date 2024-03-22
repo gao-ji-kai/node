@@ -35,6 +35,35 @@ class WriteStream extends EventEmitter {
             this.emit('open', fd);
         });
     }
+    clearBuffer() {
+        let cacheObj = this.cache.shift();//获取缓存对象
+        if (cacheObj) {
+            this._write(cacheObj.chunk, cacheObj.encoding, () => {
+                cacheObj.cb();
+                this.clearBuffer();
+            })
+        } else {
+            // 缓存区的内容已经全部写入到文件中了
+            this.writing = false;
+            if (this.needDrain) {
+                this.needDrain = false;
+                this.emit('drain');
+            }
+        }
+
+    }
+    close() {
+        fs.close(this.fd, () => {
+            this.emit('close');
+        });
+    }
+    end(chunk, encoding, cb) {
+        this.write(chunk, encoding, cb, () => {
+            cb()
+            this.close();
+
+        })
+    }
     write(chunk, encoding = 'utf8', cb = () => { }) {
         // 这是 拿不到fd  需要 打开文件后才能拿到fd
 
@@ -48,7 +77,10 @@ class WriteStream extends EventEmitter {
         if (!this.writing) {
             // 需要将本次内容写入到文件中 
             this.writing = true
-            this._write(chunk, encoding, cb)
+            this._write(chunk, encoding, () => {
+                cb();
+                this.clearBuffer();// 清空缓存区的内容
+            })
         } else {
             // 将内容放到缓存区中
             console.log('缓存区');
@@ -57,16 +89,22 @@ class WriteStream extends EventEmitter {
                 encoding,
                 cb
             })
-            
+
         }
         return !res
     }
     //真正的写入
     _write(chunk, encoding, cb) {
-        if(typeof this.fd !== 'number'){
+        if (typeof this.fd !== 'number') {
             return this.once('open', () => this._write(chunk, encoding, cb))
         }
-        console.log(this.fd,'第一次');
+        fs.write(this.fd, chunk, 0, chunk.length, this.offset, (err, written) => {
+            this.offset += written;// 每次写入后  都要移动偏移量
+            this.length -= written;// 每次写入后  都要减少缓存区的长度
+            cb();
+
+        })
+        console.log(this.fd, '第一次');
     }
 }
 module.exports = WriteStream;
