@@ -87,6 +87,23 @@ class ReadStream extends EventEmitter {
         })
 
     }
+    // 可读流和可写流之间的管道
+    pipe(ws) {
+        // 监控可读流中的数据 然后写入到可写流中
+        this.on('data', (chunk) => {
+            let flag = ws.write(chunk);
+            if (!flag) {
+                this.pause();
+            }
+        });
+        // 全部写完了 
+        ws.on('drain', () => {
+            this.resume();
+        });
+        this.on('end', () => {
+            ws.end('');
+        });
+    }
 }
 
 
