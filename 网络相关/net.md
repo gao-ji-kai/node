@@ -45,3 +45,38 @@
 - 物理层设备 中继器  极限器
 - 数据链路层设备  交换机
 - 网络层设备  路由器 WAN口  LAN口
+
+
+
+
+## 数据交互
+> 数据传输就是根据ip地址来进行寻址的 通过链路层来进行传递 (通过mac地址之间的通信)
+
+
+## TCP/IP协议簇 (就是整个osi模型里的所有协议)
+
+> TCP(Transport Control Protocol) 传输控制协议  / IP(Internet Protocol) 网络协议
+
+什么是协议  协议是用来干什么的
+- 协议就是用来规定通信双方如何进行通信的 规范 
+ - 一般三层以上才有协议
+
+- 物理层、链路层
+   多数都指的是物理层设备  并不关心协议 (一般在七层网络协议中 最底下的两层不太关注协议)
+
+- 网络层 IP协议 ARP协议 Address Resolution Protocol(地址解析协议) 通过ip地址来寻找mac地址 只能再局域网下使用 
+- 传输层 TCP协议 UDP协议
+- 应用层 HTTP协议  DNS协议 DHCP(动态主机配置协议) FTP协议(文件传输协议)
+
+## ARP协议 
+- ARP协议(Address Resolution Protocol)  地址解析协议  用来寻找mac地址
+> 有缓存 缓存arp表 
+
+## DHCP 
+- DHCP(Dynamic Host Configuration Protocol) 动态主机配置协议  用来分配ip地址
+
+## DNS 域名解析协议
+- DNS(Domain Name System) 域名系统  用来解析域名
+
+> 当用户输入一个域名的时候按回车 会发生什么
+    - 
