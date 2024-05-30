@@ -4,12 +4,13 @@
   "description": "",
   "main": "http.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "cross-env port=5000 nodemon http.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cross-env": "^7.0.3",
     "nodemon": "^3.1.1"
   }
 }
