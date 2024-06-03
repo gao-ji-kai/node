@@ -2,6 +2,7 @@
   "name": "http",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "http.js",
   "scripts": {
     "dev": "cross-env port=5000 nodemon http.js"
@@ -10,7 +11,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "chalk": "^5.3.0",
     "cross-env": "^7.0.3",
+    "http-server": "^14.1.1",
     "nodemon": "^3.1.1"
   }
 }

@@ -34,6 +34,24 @@ const server = http.createServer((req, res) => {
 
     console.log(req.headers)
 
+    const arr = []
+    req.on('data', (chunk) => {  // 如果有请求体 会触发data事件
+        arr.push(chunk);
+    });
+    req.on('end', () => { // 请求结束后触发
+        console.log(Buffer.concat(arr).toString(), 'end');
+    });
+
+    if (pathname === '/a') {// 根据不同的路径返回不同的内容 在node中这种代码可以通过子进程转换成进程间的通信来进行处理，不应该放在主进程中 会阻塞
+        let sum = 0
+        for (let i = 0; i < 1000000000; i++) {
+            sum += i
+        }
+        res.end(sum + '');
+    } else {
+        res.end('404');
+    }
+
     /*
         1.请求行
             请求方式 请求地址 请求协议/版本  GET / xxx http/1.1
@@ -56,6 +74,33 @@ const server = http.createServer((req, res) => {
             
 
         3.请求体
+             req.on('data', (chunk) => {  // 如果有请求体 会触发data事件
+                arr.push(chunk);
+                });
+            req.on('end', () => { // 请求结束后触发
+                console.log(Buffer.concat(arr).toString(), 'end');
+                })
+        
+        4.响应
+            4.1 响应行
+                res.statusCode = 200; // 状态码 由服务端来设置 可以随意设置 一般都是按照浏览器的标准来设置
+                    常见状态码
+                        1xx 信息类 100 101(webSocket) 102
+                        2xx 成功 200(成功) 204(成功了 但没响应体) 206(分段传输、拿到内容的部分数据)
+                        3xx 重定向 301(永久重定向) 302(临时重定向) 304(缓存相关 协商缓存)
+                        4xx 客户端错误 400(请求错误 参数有问题) 401(未授权、权限不够) 403(禁止访问 登录了 没权限) 404(找不到页面) 405(方法不允许)
+                        5xx 服务端错误 500(服务端错误) 502(网关错误) 503(服务端过载) 504(网关超时)
+                        也可以自定义 如 666  777  
+
+                
+
+            4.2响应头
+                res.setHeader('Content-Type', 'text/plain;charset=utf-8'); // 设置响应头
+
+            4.2响应体
+
+
+       favicon.ico  浏览器会默认请求这个文件  一般是网站的logo
      */
 
 });
@@ -76,3 +121,6 @@ server.on('error', (err) => {
 // 文件保存后 可以自动重启
 
 // 每个系统有对应的设置环境变量的方式  cross-env  可以跨平台设置环境变量 npm install cross-env -D
+
+
+
