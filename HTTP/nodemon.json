@@ -1,0 +1,7 @@
+{
+  "exec": "gaoter-server --port 4000",
+  "watch": ["./src/*.*","bin/www.js"],
+  "ext": "cjs,js,json,html",
+  "delay": 1000,
+  "ignore": ["node_modules/**"]
+}
