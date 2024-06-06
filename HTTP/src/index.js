@@ -28,6 +28,7 @@ import { getNetWorkInterfaces } from './utils.js';
 
 const __filename = new URL(import.meta.url).pathname;// 获取当前文件的绝对路径
 const __dirname = path.dirname(__filename);// 获取当前文件所在的目录
+console.log('121212', __dirname);// D:\project\node\nodejs\HTTP\src
 
 class Server {
     constructor(options = {}) {
@@ -47,7 +48,7 @@ class Server {
         res.statusCode = 404;
         res.end('Not Found');
     }
-    async processDir(assestUrl, req, res) {
+    async processDir(assestUrl, pathname, req, res) {
 
         try {
             const assestUrl = path.join(assestUrl, 'index.html');
@@ -56,7 +57,12 @@ class Server {
 
         } catch (e) {
             const dirs = await fsPromises.readdir(assestUrl)//将访问的路径的文件夹下的文件列表返回
-            const tmplStr = ejs.render(this.template, { dirs })
+            const tmplStr = ejs.render(this.template, {
+                dirs: dirs.map(dir => ({
+                    url: path.join(pathname.url, dir),
+                    dir
+                }))
+            })
             res.setHeader('Content-Type', `text/html;charset=utf-8`);
             res.end(tmplStr);
         }
@@ -65,8 +71,7 @@ class Server {
     handlerRequest = async (req, res) => {
         console.log(this);// this指向的是Server的实例
         const { pathname, query } = url.parse(req.url, true);
-        console.log('pathname', pathname);
-        console.log('query', query);
+
         // 获取文件的状态信息
         const assestUrl = path.join(this.directory, decodeURIComponent(pathname));
         try {
@@ -78,7 +83,7 @@ class Server {
                 // 是文件夹 需要看文件夹下是否有index.html 有的话返回index.html 没有的话返回文件夹下的文件列表
                 // const indexUrl = path.join(assestUrl, 'index.html');
 
-                this.processDir(assestUrl, req, res);
+                this.processDir(assestUrl, pathname, req, res);
             }
 
         } catch (e) {

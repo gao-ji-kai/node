@@ -6,8 +6,8 @@
     <title>Document</title>
   </head>
   <body>
-    <%dirs.forEach(dir=>{%dir>
-    <li><%=dir%></li>
+    <%dirs.forEach(obj=>{%>
+    <li><a href="<%=obj.url%>"><%=obj.dir%></a></li>
     <%})%>
   </body>
 </html>
