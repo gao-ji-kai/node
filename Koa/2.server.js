@@ -31,15 +31,15 @@ app.use((ctx) => {//ctx是上下文对象 context对象  封装了很多原生No
 
      */
     // 响应状态码
-    ctx.response.status = 200;
+    ctx.status = 200;
     // 响应类型
-    ctx.response.type = 'text/html';
+    ctx.type = 'text/html';
     // 响应体内容
-    ctx.response.message = 'ok';
+    ctx.message = 'ok';
     // 设置响应头中的内容类型为html文件 编码为utf-8
-    ctx.response.set('Content-Type', 'text/html;charset=utf-8');
+    ctx.set('Content-Type', 'text/html;charset=utf-8');
     // 设置响应体
-    ctx.response.body = '<h1>Hello Koa</h1>';
+    ctx.body = '<h1>Hello Koa</h1>';
 
 })
 

@@ -1,11 +1,13 @@
 const http = require('http');
 const request = require('./request');
 const response = require('./response');
+const context = require('./context');
 
 class Application {
     constructor() {
         this.request = Object.create(request);
         this.response = Object.create(response);
+        this.context = Object.create(context);
     }
     // 使用一个请求处理函数 
     use(fn) {
@@ -21,24 +23,24 @@ class Application {
     }
     // 创建一个回调函数
     callback() {
-       const handleRequest = (req, res) => {
+        const handleRequest = (req, res) => {
             // 创建一个上下文对象
             const ctx = this.createContext(req, res);
             // 调用中间件处理函数
-           this.middleware(ctx);
-           // 取出ctx.body的值 并写入响应体
-           return res.end(ctx.response.body);
+            this.middleware(ctx);
+            // 取出ctx.body的值 并写入响应体
+            return res.end(ctx.response.body);
         }
         return handleRequest;
     }
-    createContext(req,res) {
-        const context = { req, res };
+    createContext(req, res) {
+        const context = Object.create(this.context); //相当一继承 __proto__指向context
         // 需要保证每次请求到来时  每个context都是新的 互不影响
         const request = context.request = Object.create(this.request);//相当一继承 __proto__指向request
         const response = context.response = Object.create(this.response);
         // 让封装后的request和response对象拥有对原生req和res的引用
-        request.req =req;
-        response.res = res;
+        request.req = context.req = req;
+        response.res = context.res = res;
         return context;
     }
 }
