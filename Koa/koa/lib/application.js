@@ -3,6 +3,7 @@ const request = require('./request');
 const response = require('./response');
 const context = require('./context');
 const compose = require('./koa-compose');
+const Stream = require('stream');
 
 class Application {
     constructor() {
@@ -63,9 +64,18 @@ class Application {
     }
 }
 function respond(ctx) {
+    //获取上下文对象中的res和body 
     let res = ctx.res
+    // 把响应内容写入响应流,并关闭响应流
     let body = ctx.body;
-    return res.end(body);
+    // 原生的res.end方法只能接受字符串和Buffer 需要判断body的类型
+    if(typeof body === 'string' || Buffer.isBuffer(body)){
+        return res.end(body);
+    }
+    //如果响应体是流的格式 可以使用管道的方式把可读流写入响应流
+    if (body instanceof Stream) return body.pipe(res);
+    // 如果响应体是普通js对象，需要将对象转成字符串
+    return res.end(JSON.stringify(body));
 
 }
 module.exports = Application;

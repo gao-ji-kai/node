@@ -5,7 +5,12 @@
  */
 function compose(middleware) {
     return function (ctx) {
+        let index = -1;
         function dispatch(i) {
+            // 如果i小于index 说明next()被调用了多次
+            if (i <= index) return Promise.reject(new Error('next() called multiple times'));
+            //每次派发的时候 会把当前的i赋值给index
+            index = i;
             let fn = middleware[i];
             // 如果fn不存在 直接返回一个成功的promise
             if (!fn) {
